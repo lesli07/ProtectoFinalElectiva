@@ -3,7 +3,13 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - nextObject
+  - repeatAudio
+  - option_1
+  - option_2
+  - option_3
+  - option_4
   layers:
   - Default
   - TransparentFX
