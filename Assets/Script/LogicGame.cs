@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+using UnityEngine.SceneManagement;
 public class LogicGame : MonoBehaviour
 {
 
@@ -24,7 +24,7 @@ public class LogicGame : MonoBehaviour
     public Text labelInformativo;
     private int[] visitados;
     private int value;
-    private int correct ;
+    private int correct;
     private AudioSource audioOk;
     private AudioSource audioFail;
     private AudioSource[] sounds;
@@ -35,15 +35,18 @@ public class LogicGame : MonoBehaviour
     public GameObject buttonOption2;
     public GameObject buttonOption3;
     public GameObject buttonOption4;
+    public int sceneActive;
     // Start is called before the first frame update
-    void Start(){
-        sounds  = GetComponents<AudioSource>();
+    void Start()
+    {
+        sounds = GetComponents<AudioSource>();
         audioOk = sounds[0];
         audioFail = sounds[1];
         tryAgain();
     }
 
-    private void tryAgain(){
+    private void tryAgain()
+    {
         repeat.SetActive(false);
 
         buttonOption1.SetActive(true);
@@ -58,70 +61,120 @@ public class LogicGame : MonoBehaviour
         }
         value = 11;
         correct = 0;
-        labelInformativo.text = "Points : "+points;
+        labelInformativo.text = "Points : " + points;
         selectGameObject();
     }
     // Update is called once per frame
     void Update()
     {
         //Validacion de los objetos impactados
-        if(Input.touchCount > 0 &&Input.touches[0].phase == TouchPhase.Began){
+        if (Input.touchCount > 0 && Input.touches[0].phase == TouchPhase.Began)
+        {
             Debug.Log("Se Detecto un Touch");
             Ray rayo = Camera.main.ScreenPointToRay(Input.GetTouch(0).position);
             RaycastHit objetoImpacto;
 
-            if(Physics.Raycast(rayo , out objetoImpacto)){
-                Debug.Log("Objeto Impactado "+ objetoImpacto.transform.name);
-                if(objetoImpacto.transform.gameObject.CompareTag("repeatAudio")){
-                    tryAgain();
-                }else if(objetoImpacto.transform.gameObject.CompareTag("option_1") && correct == 1){
+            if (Physics.Raycast(rayo, out objetoImpacto))
+            {
+                Debug.Log("Objeto Impactado " + objetoImpacto.transform.name);
+                if (objetoImpacto.transform.gameObject.CompareTag("repeatAudio"))
+                {
+                    sendTest();
+                }
+                else if (objetoImpacto.transform.gameObject.CompareTag("option_1") && correct == 1)
+                {
                     option_ok();
-                }else if(objetoImpacto.transform.gameObject.CompareTag("option_2") && correct == 2){
+                }
+                else if (objetoImpacto.transform.gameObject.CompareTag("option_2") && correct == 2)
+                {
                     option_ok();
-                }else if(objetoImpacto.transform.gameObject.CompareTag("option_3") && correct == 3){
+                }
+                else if (objetoImpacto.transform.gameObject.CompareTag("option_3") && correct == 3)
+                {
                     option_ok();
-                }else if(objetoImpacto.transform.gameObject.CompareTag("option_4") && correct == 4){
+                }
+                else if (objetoImpacto.transform.gameObject.CompareTag("option_4") && correct == 4)
+                {
                     option_ok();
-                }else{
+                }
+                else
+                {
                     option_fail();
                 }
-            }else{
+            }
+            else
+            {
                 Debug.Log("No se encontro impacto");
             }
         }
     }
 
-    private void option_ok(){
+    public void sendTest()
+    {
+        if (points < 850 && sceneActive == 0)
+        {
+            tryAgain();
+        }
+        else if (points > 850 && sceneActive == 0)
+        {
+            SceneManager.LoadScene(1);
+        }
+        else if (points > 850 && sceneActive == 1)
+        {
+            SceneManager.LoadScene(0);
+        }else{
+            tryAgain();
+        }
+        
+    }
+
+    private void option_ok()
+    {
         audioOk.Play();
         points = points + 100;
-        labelInformativo.text = "Points : "+points;
+        labelInformativo.text = "Points : " + points;
         StartCoroutine("runNext");
     }
-    private void option_fail(){
-        if(points > 49){
+    private void option_fail()
+    {
+        if (points > 49)
+        {
             points = points - 50;
         }
-        labelInformativo.text = "Points : "+points;
+        labelInformativo.text = "Points : " + points;
         audioFail.Play();
     }
 
-    private IEnumerator runNext(){
+    private IEnumerator runNext()
+    {
         yield return new WaitForSecondsRealtime(1);
         selectGameObject();
     }
 
-    public void option(int index){
-        if(index == 0){
+    public void option(int index)
+    {
+        if (index == 0)
+        {
             select.GetComponent<AudioSource>().Play();
-        }else if(index == 1 && correct == 1){
+        }
+        else if (index == 1 && correct == 1)
+        {
             option_ok();
-        }else if(index == 2 && correct == 2){
+        }
+        else if (index == 2 && correct == 2)
+        {
             option_ok();
-        }else if(index == 3 && correct == 3){
+        }
+        else if (index == 3 && correct == 3)
+        {
             option_ok();
-        }else if(index == 4 && correct == 4){
+        }
+        else if (index == 4 && correct == 4)
+        {
             option_ok();
-        }else{
+        }
+        else
+        {
             option_fail();
         }
     }
@@ -171,7 +224,25 @@ public class LogicGame : MonoBehaviour
             buttonOption2.SetActive(false);
             buttonOption3.SetActive(false);
             buttonOption4.SetActive(false);
-            labelInformativo.text = "Total points "+points;
+            option1.text = "";
+            option2.text = "";
+            option3.text = "";
+            option4.text = "";
+            if (points < 850)
+            {
+                labelInformativo.text = "Total points " + points;
+            }
+            else
+            {
+                if(sceneActive == 0)
+                {
+                    labelInformativo.text = "Start Test? ";
+                }
+                else
+                {
+                    labelInformativo.text = "Total points " + points;
+                }
+            }
         }
     }
 
@@ -187,7 +258,7 @@ public class LogicGame : MonoBehaviour
                 correct = 1;
                 select = apple;
                 apple.SetActive(true);
-                select.GetComponent<AudioSource>().Play();
+                apple.GetComponent<AudioSource>().Play();
                 break;
             case 1:
                 option1.text = "Bannana";
@@ -205,6 +276,7 @@ public class LogicGame : MonoBehaviour
                 option3.text = "Bear";
                 option4.text = "Bir";
                 correct = 3;
+
                 bear.SetActive(true);
                 select = bear;
                 bear.GetComponent<AudioSource>().Play();
