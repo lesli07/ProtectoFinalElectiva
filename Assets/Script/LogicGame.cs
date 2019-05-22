@@ -42,7 +42,8 @@ public class LogicGame : MonoBehaviour
             RaycastHit objetoImpacto;
             if (Physics.Raycast(rayo, out objetoImpacto)){
                 if (objetoImpacto.transform.gameObject.CompareTag("repeatAudio")){
-                    inTest = !inTest;
+                    inTest = (points > 900);
+                    points = 0;
                     initGame();
                 }
                 else if (objetoImpacto.transform.gameObject.CompareTag("option_1") && select.GetComponent<Options>().getCorrect() == 1){
@@ -93,8 +94,7 @@ public class LogicGame : MonoBehaviour
         if(visitados.Length == 0){
             desactivateButtons(false);
             noViewObjects();
-            labelInformativo.text = "Start Test?";
-            points = 0;
+            labelInformativo.text = (points > 900)?"Start Test":"Try Again";
             for(int index  = 0 ; index < options.Length ; index ++){
                 options[index].text = "";
             }
@@ -104,7 +104,7 @@ public class LogicGame : MonoBehaviour
                 select.SetActive(false);
             }
             // Random para escoger el objeto
-            value = Random.Range(0, (visitados.Length - 1));
+            value = Random.Range(0, (visitados.Length - 1));    
             //Seleccionado el objeto
             select = objects[visitados[value]];
             //Mostrando las opciones del objeto
