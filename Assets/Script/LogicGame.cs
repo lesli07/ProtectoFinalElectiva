@@ -43,7 +43,7 @@ public class LogicGame : MonoBehaviour
             if (Physics.Raycast(rayo, out objetoImpacto)){
                 if (objetoImpacto.transform.gameObject.CompareTag("repeatAudio")){
                     inTest = !inTest;
-                    selectObject();
+                    initGame();
                 }
                 else if (objetoImpacto.transform.gameObject.CompareTag("option_1") && select.GetComponent<Options>().getCorrect() == 1){
                     option_ok();
@@ -89,11 +89,15 @@ public class LogicGame : MonoBehaviour
     }
     // Generando un nuevo objeto seleccionado
     private void selectObject(){
-        Debug.Log("inTest " + inTest);
+        Debug.Log("APP - inTest " + inTest);
         if(visitados.Length == 0){
             desactivateButtons(false);
+            noViewObjects();
             labelInformativo.text = "Start Test?";
             points = 0;
+            for(int index  = 0 ; index < options.Length ; index ++){
+                options[index].text = "";
+            }
         }else{
 
             if(select){
@@ -110,7 +114,9 @@ public class LogicGame : MonoBehaviour
             //Activando visualmente el objeto
             select.SetActive(true);
             //validamos si se encuentra en test
-            select.GetComponent<Options>().hiddenObject(inTest);
+            if(inTest){
+                select.GetComponent<Options>().hiddenObject();
+            }
             //Colocando el sonido
             select.GetComponent<AudioSource>().Play();
             //Eliminando el indice de la prueba

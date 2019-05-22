@@ -27,12 +27,13 @@ public class Options : MonoBehaviour
         return correct;
     }
 
-    public void hiddenObject(bool hidden){
-        if(hidden){
-            transform.localScale = new Vector3(0,0,0);
-        }
-        // else{
-        //     transform.localScale = new Vector3(sizeInit.x , sizeInit.y , sizeInit.z );
-        // }
+    public void hiddenObject(){
+        Debug.Log("APP - hidden ");
+        transform.localScale = new Vector3(0,0,0);
+    }
+
+    public void showObject(){
+        Debug.Log("APP - hidden ");
+        transform.localScale = new Vector3(sizeInit.x, sizeInit.y,sizeInit.z);
     }
 }
